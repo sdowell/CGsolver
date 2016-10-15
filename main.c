@@ -136,31 +136,36 @@ double* daxpy(double alpha, double *v, double beta, double *w, int n){
 	}
 }
 double* matvec(double *w, int k, int rank, int size){
-	double *v;
+	int n = k * k;
+	int p = size;
+	double *v = malloc(sizeof(double) * n / p);
+	MPI_Status status;
+	double *ww = malloc(sizeof(double) * (n / p + 2 * k));
+	memcpy(ww[k], w, n / p);
 	// TODO: construct boundary conditions for w from adjacent processors
 	if(rank % 2 == 1){
 		// TODO: write then read from previous processor
-		MPI_Send();
-		MPI_Recv();
+		MPI_Send(w[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD);
+		MPI_Recv(ww[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
 		// TODO: write then read from next processor
 		if(rank != size - 1){
-			MPI_Send();
-			MPI_Recv();
+			MPI_Send(w[n / p - k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
+			MPI_Recv(ww[n / p + k], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
 		}
 	}else{
 		// TODO: read then write from next processor
 		if(rank != size - 1){
-			MPI_Recv();
-			MPI_Send();
+			MPI_Recv(ww[n / p + k], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
+			MPI_Send(w[n / p - k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
 		}
 		// TODO: read then write from previous processor
 		if(rank != 0){
-			MPI_Recv();
-			MPI_Send();	
+			MPI_Recv(ww[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
+			MPI_Send(w[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD);	
 		}
 	}
-	int n = k * k;
 	int i, j;
+	double *wptr = ww[k];
 	int start = k * rank / size;
 	int end = start + k / size;
 	int globalindex, localindex;
@@ -168,17 +173,19 @@ double* matvec(double *w, int k, int rank, int size){
 		for(j = 0; j < k; j++){
 			globalindex = (i) * k + j;
 			localindex = globalindex - start * k;
-			v[localindex] = 4 * w[localindex];
+			v[localindex] = 4 * wptr[localindex];
 			if(i != 0)
-				v[localindex] -= w[localindex - k];
+				v[localindex] -= wptr[localindex - k];
 			if(j != 0)
-				v[localindex] -= w[localindex - 1];
+				v[localindex] -= wptr[localindex - 1];
 			if(j != k - 1)
-				v[localindex] -= w[localindex + 1];
+				v[localindex] -= wptr[localindex + 1];
 			if(i != k - 1)
-				v[localindex] -= w[localindex + k];
+				v[localindex] -= wptr[localindex + k];
 		}
 	}
+	free(ww);
+	return v;
 }
 
 int getA(int index, int n){
