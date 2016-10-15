@@ -74,20 +74,21 @@ int main( int argc, char* argv[] ) {
 	double *tmp = malloc(sizeof(double) * myN);
 	//double tmp[myN];
 	int i;
-	for(i = 0; i < myN; i++){
+/*	for(i = 0; i < myN; i++){
 		tmp[i] = cs240_getB(i + (rank * myN), n);
 		printf("Proc %d: tmp[%d] = %f\n", rank, i + (rank * myN), tmp[i]);
 	}
 	double dd = ddot(tmp, tmp, myN);
 	printf("Ddot from process %d: %lf\n", rank, dd);
-	
-	printf("Testing matvec\n");
+*/	
+	printf("-------------------Testing matvec-----------------------\n");
 	for(i = 0; i < myN; i++){
-		tmp[i] = 0;
+		tmp[i] = cs240_getB(i + (rank * myN), n);
 	}	
 	double *v = matvec(tmp, k, rank, size);
+	int ind = rank * myN;
 	for(i = 0; i < myN; i++){
-		printf("Proc %d: tmp[%d] = %f\n", rank, i, tmp[i]);
+		printf("Proc %d: v[%d] = %f\n", rank, ind + i, v[i]);
 	}
 /*	r = b;
 	d = r;
@@ -149,31 +150,45 @@ double* matvec(double *w, int k, int rank, int size){
 	double *v = malloc(sizeof(double) * n / p);
 	MPI_Status status;
 	double *ww = malloc(sizeof(double) * (n / p + 2 * k));
-	memcpy(ww[k], w, n / p);
-	// TODO: construct boundary conditions for w from adjacent processors
+	memcpy(&ww[k], w, (n / p) * sizeof(double));
+	int i, j;
+/*	for(i = 0; i < n / p; i++){
+		if(rank == 0)
+			printf("Proc %d: w[%d] = %f\n", rank, i, w[i]);
+	}
+	for(i = 0; i < n / p + 2 * k; i++){
+		if(rank == 0){
+			printf("Proc %d: ww[%d] = %f\n", rank, i, ww[i]);
+		}
+	}
+*/	// TODO: construct boundary conditions for w from adjacent processors
 	if(rank % 2 == 1){
 		// TODO: write then read from previous processor
-		MPI_Send(w[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD);
-		MPI_Recv(ww[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
+		MPI_Send(&w[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD);
+		MPI_Recv(&ww[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
 		// TODO: write then read from next processor
 		if(rank != size - 1){
-			MPI_Send(w[n / p - k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
-			MPI_Recv(ww[n / p + k], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
+			MPI_Send(&w[n / p - k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
+			MPI_Recv(&ww[n / p + k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD, &status);
 		}
 	}else{
 		// TODO: read then write from next processor
 		if(rank != size - 1){
-			MPI_Recv(ww[n / p + k], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
-			MPI_Send(w[n / p - k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
+			MPI_Recv(&ww[n / p + k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD, &status);
+			MPI_Send(&w[n / p - k], k, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
 		}
 		// TODO: read then write from previous processor
 		if(rank != 0){
-			MPI_Recv(ww[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
-			MPI_Send(w[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD);	
+			MPI_Recv(&ww[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
+			MPI_Send(&w[0], k, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD);	
 		}
 	}
-	int i, j;
-	double *wptr = ww[k];
+	//int i, j;
+/*	for(i = 0; i < n / p + 2 * k; i++){
+		if(rank == 0)
+			printf("Proc %d: ww[%d] = %f\n", rank, i, ww[i]);
+	}
+*/	double *wptr = &ww[k];
 	int start = k * rank / size;
 	int end = start + k / size;
 	int globalindex, localindex;
