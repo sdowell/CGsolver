@@ -14,7 +14,7 @@ double* load_vec( char* filename, int* k );
 void save_vec( int k, double* x );
 double ddot(double *v, double *w, int n);
 double* daxpy(double alpha, double *v, double beta, double *w, int n);
-double* matvec(double *v, int n);
+double* matvec(double *v, int k, int rank, int size);
 
 int main( int argc, char* argv[] ) {
 	int writeOutX = 0;
@@ -81,6 +81,14 @@ int main( int argc, char* argv[] ) {
 	double dd = ddot(tmp, tmp, myN);
 	printf("Ddot from process %d: %lf\n", rank, dd);
 	
+	printf("Testing matvec\n");
+	for(i = 0; i < myN; i++){
+		tmp[i] = 0;
+	}	
+	double *v = matvec(tmp, k, rank, size);
+	for(i = 0; i < myN; i++){
+		printf("Proc %d: tmp[%d] = %f\n", rank, i, tmp[i]);
+	}
 /*	r = b;
 	d = r;
 	while(){
