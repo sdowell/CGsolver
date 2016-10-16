@@ -7,6 +7,7 @@
  */
 #include "mpi.h"
 #include "hw2harness.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +16,7 @@ void save_vec( int k, double* x );
 double ddot(double *v, double *w, int n);
 double* daxpy(double alpha, double *v, double beta, double *w, int n);
 double* matvec(double *v, int k, int rank, int size);
+double* cgsolve(double *b, int k, int rank, int size,int maxiters, double relres);
 
 int main( int argc, char* argv[] ) {
 	int writeOutX = 0;
@@ -96,7 +98,14 @@ int main( int argc, char* argv[] ) {
 		alpha = ddot(r, r) / matvec();
 		x = x + alpha 
 	}
-*/	
+*/
+	b = malloc(sizeof(double) * myN);
+	for(i = 0; i < myN; i++){
+		b[i] = cs240_getB(i + (rank * myN), n);
+	}
+	x = cgsolve(b, k, rank, size, maxiterations, 1.0);	
+	int correct = cs240_verify(x, k, 1.0);
+	printf("P%d Correct: %d\n",rank, correct);
  	// End Timer
 	t2 = MPI_Wtime();
 	
@@ -123,7 +132,55 @@ int main( int argc, char* argv[] ) {
 	
 	return 0;
 }
-
+double* cgsolve(double *b, int k, int rank, int size, int maxiters, double relres){
+//	if(rank == 0)
+//		printf("Entering matvec\n");
+	relres = 1;
+	int niters = 0;
+	int n = k * k;
+	int p = size;
+	int myN = n / p;
+	double *x = malloc(sizeof(double) * myN);
+	double *r = malloc(sizeof(double) * myN);
+//	if(rank == 0)
+//		printf("memcpy r,b\n");
+	memcpy(r, b, myN * sizeof(double));
+	double rtr = ddot(r, r, myN);
+	double *d = malloc(sizeof(double) * myN);
+//	if(rank == 0)
+//		printf("memcpy d,r\n");
+	memcpy(d, r, myN * sizeof(double));
+	double normb = sqrt(ddot(b, b, myN));
+	double *Ad;
+	double alpha, beta;
+	double rtrold;
+//	if(rank == 0)
+//		printf("Beginning matvec loop\n");
+	while(relres > .000001 && niters < maxiters){
+		niters++;
+		Ad = matvec(d, k, rank, size);
+		alpha = rtr / ddot(d, Ad, myN);
+		daxpy(1.0, x, alpha, d, myN);
+		daxpy(1.0, r, -1.0 * alpha, Ad, myN);
+		rtrold = rtr;
+		rtr = ddot(r, r, myN);
+		beta = rtr / rtrold;
+		daxpy(beta, d, 1, r, myN);
+		relres = sqrt(rtr) / normb;
+	}
+//	return x;
+	double *xbuf = malloc(sizeof(double) * n);
+	MPI_Allgather(x, myN, MPI_DOUBLE, xbuf, myN, MPI_DOUBLE, MPI_COMM_WORLD);
+	if(rank == 0){
+		int i;
+		for(i = 0; i < n; i++)
+			printf("x[%d] = %f\n", i, x[i]);
+	}
+	free(x);
+	free(r);
+	free(d);
+	return xbuf;
+}
 double ddot(double *v, double *w, int n){
 	double localsum = 0;
 	double globalsum = 0;
@@ -131,7 +188,7 @@ double ddot(double *v, double *w, int n){
 	int i;
 	for(i = 0; i < n; i++){
 		localsum += v[i] * w[i];
-		printf("Proc %d: %f += %f * %f\n",i, localsum, v[i], w[i]);
+		//printf("Proc %d: %f += %f * %f\n",i, localsum, v[i], w[i]);
 	}
 	
 	MPI_Allreduce(&localsum, &globalsum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
