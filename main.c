@@ -63,17 +63,17 @@ int main( int argc, char* argv[] ) {
 	double beta;
 	
 	// Test to check values of B
-	if(rank == 0){
+/*	if(rank == 0){
 		int i;
 		for(i = 0; i < n; i++){
 			printf("b[%d]: %f\n", i, cs240_getB(i,n));
 		}
 	}	
-	
+*/	
 	// Test to exercise distributing ddot across multiple processors
 	int myN = n / size;
 	//printf("myN: %d = %d / %d\n", myN, n, size);
-	double *tmp = malloc(sizeof(double) * myN);
+	//double *tmp = malloc(sizeof(double) * myN);
 	//double tmp[myN];
 	int i;
 /*	for(i = 0; i < myN; i++){
@@ -83,7 +83,7 @@ int main( int argc, char* argv[] ) {
 	double dd = ddot(tmp, tmp, myN);
 	printf("Ddot from process %d: %lf\n", rank, dd);
 */	
-	printf("-------------------Testing matvec-----------------------\n");
+/*	printf("-------------------Testing matvec-----------------------\n");
 	for(i = 0; i < myN; i++){
 		tmp[i] = cs240_getB(i + (rank * myN), n);
 	}	
@@ -92,6 +92,7 @@ int main( int argc, char* argv[] ) {
 	for(i = 0; i < myN; i++){
 		printf("Proc %d: v[%d] = %f\n", rank, ind + i, v[i]);
 	}
+*/
 /*	r = b;
 	d = r;
 	while(){
@@ -104,8 +105,8 @@ int main( int argc, char* argv[] ) {
 		b[i] = cs240_getB(i + (rank * myN), n);
 	}
 	x = cgsolve(b, k, rank, size, maxiterations, 1.0);	
-	int correct = cs240_verify(x, k, 1.0);
-	printf("P%d Correct: %d\n",rank, correct);
+	//int correct = cs240_verify(x, k, 1.0);
+	//printf("P%d Correct: %d\n",rank, correct);
  	// End Timer
 	t2 = MPI_Wtime();
 	
@@ -171,12 +172,12 @@ double* cgsolve(double *b, int k, int rank, int size, int maxiters, double relre
 //	return x;
 	double *xbuf = malloc(sizeof(double) * n);
 	MPI_Allgather(x, myN, MPI_DOUBLE, xbuf, myN, MPI_DOUBLE, MPI_COMM_WORLD);
-	if(rank == 0){
+/*	if(rank == 0){
 		int i;
 		for(i = 0; i < n; i++)
 			printf("x[%d] = %f\n", i, x[i]);
 	}
-	free(x);
+*/	free(x);
 	free(r);
 	free(d);
 	return xbuf;

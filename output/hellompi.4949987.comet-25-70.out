@@ -1,0 +1,19 @@
+IBRUN: Command is ./cgsolve
+IBRUN: Command is /home/sdowell/hw2/public/CGsolver/cgsolve
+IBRUN: no hostfile mod needed
+IBRUN: Nodefile is /tmp/SVVMWffpvA
+
+IBRUN: MPI binding policy: scatter/core for 1 threads per rank (12 cores per socket)
+IBRUN: Adding MV2_USE_OLD_BCAST=1 to the environment
+IBRUN: Adding MV2_CPU_BINDING_LEVEL=core to the environment
+IBRUN: Adding MV2_ENABLE_AFFINITY=1 to the environment
+IBRUN: Adding MV2_DEFAULT_TIME_OUT=23 to the environment
+IBRUN: Adding MV2_CPU_BINDING_POLICY=scatter to the environment
+IBRUN: Adding MV2_USE_HUGEPAGES=0 to the environment
+IBRUN: Adding MV2_HOMOGENEOUS_CLUSTER=0 to the environment
+IBRUN: Adding MV2_USE_UD_HYBRID=0 to the environment
+IBRUN: Added 8 new environment variables to the execution environment
+IBRUN: Command string is [mpirun_rsh -np 1 -hostfile /tmp/SVVMWffpvA -export /home/sdowell/hw2/public/CGsolver/cgsolve 2000 out.txt]
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 51.290025
+IBRUN: Job ended with value 0

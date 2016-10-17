@@ -1,0 +1,113 @@
+IBRUN: Command is ./cgsolve
+IBRUN: Command is /home/sdowell/hw2/public/CGsolver/cgsolve
+IBRUN: no hostfile mod needed
+IBRUN: Nodefile is /tmp/aNBlzmk31n
+
+IBRUN: MPI binding policy: scatter/core for 1 threads per rank (12 cores per socket)
+IBRUN: Adding MV2_USE_OLD_BCAST=1 to the environment
+IBRUN: Adding MV2_CPU_BINDING_LEVEL=core to the environment
+IBRUN: Adding MV2_ENABLE_AFFINITY=1 to the environment
+IBRUN: Adding MV2_DEFAULT_TIME_OUT=23 to the environment
+IBRUN: Adding MV2_CPU_BINDING_POLICY=scatter to the environment
+IBRUN: Adding MV2_USE_HUGEPAGES=0 to the environment
+IBRUN: Adding MV2_HOMOGENEOUS_CLUSTER=0 to the environment
+IBRUN: Adding MV2_USE_UD_HYBRID=0 to the environment
+IBRUN: Added 8 new environment variables to the execution environment
+IBRUN: Command string is [mpirun_rsh -np 32 -hostfile /tmp/aNBlzmk31n -export /home/sdowell/hw2/public/CGsolver/cgsolve 2000 out.txt]
+P20 Correct: 0
+P18 Correct: 0
+P19 Correct: 0
+Problem size (k): 2000
+Problem size (k): 2000
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.831745
+Elapsed time during CGSOLVE: 1.831742
+Elapsed time during CGSOLVE: 1.831794
+P7 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889009
+P21 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.832063
+P8 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889205
+P9 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889376
+P6 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889350
+P17 Correct: 0
+P5 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889521
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.832305
+P16 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.832409
+P12 Correct: 0
+Problem size (k): 2000
+P13 Correct: 0
+Elapsed time during CGSOLVE: 1.889740
+Problem size (k): 2000
+P11 Correct: 0
+Elapsed time during CGSOLVE: 1.889788
+Problem size (k): 2000
+P10 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889764
+Elapsed time during CGSOLVE: 1.889803
+P14 Correct: 0
+P15 Correct: 0
+Problem size (k): 2000
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.889807
+Elapsed time during CGSOLVE: 1.889865
+P22 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.832897
+P4 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.890103
+P3 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.890200
+P25 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.833216
+P24 Correct: 0
+P23 Correct: 0
+Problem size (k): 2000
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.833237
+Elapsed time during CGSOLVE: 1.833249
+P26 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.833460
+P2 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.890729
+P28 Correct: 0
+P27 Correct: 0
+Problem size (k): 2000
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.833692
+Elapsed time during CGSOLVE: 1.833723
+P1 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.891354
+P29 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.834355
+P30 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.834914
+P0 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.892275
+P31 Correct: 0
+Problem size (k): 2000
+Elapsed time during CGSOLVE: 1.835067
+IBRUN: Job ended with value 0
