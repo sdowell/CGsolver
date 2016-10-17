@@ -21,7 +21,7 @@ double* cgsolve(double *b, int k, int rank, int size,int maxiters, double relres
 int main( int argc, char* argv[] ) {
 	int writeOutX = 0;
 	int n, k;
-	int maxiterations = 1000;
+	int maxiterations = 100000;
 	int niters=0;
  	double norm;
 	double* b;
@@ -109,7 +109,8 @@ int main( int argc, char* argv[] ) {
 	//printf("P%d Correct: %d\n",rank, correct);
  	// End Timer
 	t2 = MPI_Wtime();
-	
+	int correct = cs240_verify(x, k, 1.0);
+	printf("P%d Correct: %d\n", rank, correct);	
 	if ( writeOutX ) {
 		save_vec( k, x );
 	}
@@ -152,14 +153,14 @@ double* cgsolve(double *b, int k, int rank, int size, int maxiters, double relre
 //		printf("memcpy d,r\n");
 	memcpy(d, r, myN * sizeof(double));
 	double normb = sqrt(ddot(b, b, myN));
-	double *Ad;
+	//double *Ad;
 	double alpha, beta;
 	double rtrold;
 //	if(rank == 0)
 //		printf("Beginning matvec loop\n");
 	while(relres > .000001 && niters < maxiters){
 		niters++;
-		Ad = matvec(d, k, rank, size);
+		double *Ad = matvec(d, k, rank, size);
 		alpha = rtr / ddot(d, Ad, myN);
 		daxpy(1.0, x, alpha, d, myN);
 		daxpy(1.0, r, -1.0 * alpha, Ad, myN);
@@ -168,6 +169,7 @@ double* cgsolve(double *b, int k, int rank, int size, int maxiters, double relre
 		beta = rtr / rtrold;
 		daxpy(beta, d, 1, r, myN);
 		relres = sqrt(rtr) / normb;
+		free(Ad);
 	}
 //	return x;
 	double *xbuf = malloc(sizeof(double) * n);
